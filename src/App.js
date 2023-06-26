@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { DataStore } from "@aws-amplify/datastore";
+import { CAUSES } from "./models";
+import { CustomCausesForm } from "./ui-components";
+import { withAuthenticator } from "@aws-amplify/ui-react";
 
-function App() {
+function App({ signOut, user }) {
+  const create = async () => {
+    console.log("reper");
+    const result = await DataStore.save(
+      new CAUSES({
+        name: "Static lorem ipsum dolor sit amet",
+        image: "Static lorem ipsum dolor sit amet",
+      })
+    );
+    console.log("result: " + JSON.stringify(result));
+
+    if (result) {
+      alert("Success!");
+    } else {
+      alert("Error!");
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ width: "40%" }}>
+      <h1>Hello {user?.attributes?.email}</h1>
+      <button onClick={signOut}>Sign out</button>
+      <CustomCausesForm />
+      <button type="button" onClick={create}>
+        Add static data
+      </button>
     </div>
   );
 }
 
-export default App;
+export default withAuthenticator(App);
